@@ -24,10 +24,12 @@ def convert_date(iso_string):
     Returns:
         A date formatted like: Weekday Date Month Year e.g. Tuesday 06 July 2021
     """
+# Converted string with ISO date into a datetime object
 
     date = datetime.fromisoformat(iso_string)
 
-    #"Monday 05 July 2021"
+# Created dictionaries for weekdays and months
+
     weekday_dictionary = {
         0:"Monday",
         1:"Tuesday",
@@ -53,14 +55,21 @@ def convert_date(iso_string):
         12:"December"
     }
 
+# Using the weekday and month numbers as a dictionary indices to get the string with a weekday and a month
+
     weekday = weekday_dictionary[date.weekday()]
     month = month_dictionary[date.month]
+
     year = str(date.year)
+
+# Adding a "0" before day number if it is a one-digit number
 
     if date.day <10:
         day = "0" + str(date.day)
     else: 
         day = str(date.day)
+
+# Creating a string message 
 
     formatted_date  = weekday + " " + day + " " + month + " " +  year
 
@@ -77,10 +86,7 @@ def convert_f_to_c(temp_in_farenheit):
         A float representing a temperature in degrees celcius, rounded to 1dp.
     """
     temp_in_celcius = round((float(temp_in_farenheit) - 32.0) *5/9,1)
-    return temp_in_celcius
-
-
-    
+    return temp_in_celcius    
 
 
 def calculate_mean(weather_data):
@@ -114,6 +120,8 @@ def load_data_from_csv(csv_file):
         csv_reader = list(csv.reader(file))
     
     csv_list = []
+
+# For each line changin 2nd and 3 rd item into an int and then appending the line to a new list
 
     for line in csv_reader [1:]:
         if line != []:
@@ -176,10 +184,15 @@ def generate_summary(weather_data):
     Returns:
         A string containing the summary information.
     """
+# Getting the length of a list
 
     number_of_days = str(len(weather_data))
+
+# Creating two empty lists to pass the items corresponding to min and max temp
     min_temp_list = []
     max_temp_list = []
+
+# Appening items from weather data to the new lists
 
     for line in weather_data:
         min_temp_list.append(line[1])
@@ -187,20 +200,32 @@ def generate_summary(weather_data):
     for line in weather_data:
         max_temp_list.append(line[2])
 
+# Finding the min temperature out of all of temperaturs and on which day it occured
+
     min_temp_index = find_min(min_temp_list)
     max_temp_index = find_max(max_temp_list)
+
+# Finding average of sll min and all max temperatures    
 
     avg_min = format_temperature(convert_f_to_c(calculate_mean(min_temp_list)))
     avg_max = format_temperature(convert_f_to_c(calculate_mean(max_temp_list)))
 
+# Formatting min and max temperstures
+
     min_temp = format_temperature(convert_f_to_c(min_temp_index[0]))
     max_temp = format_temperature(convert_f_to_c(max_temp_index[0]))
+
+ # Getting the indices of the min and max temperatures
 
     min_temp_line = int(min_temp_index[1])
     max_temp_line = int(max_temp_index[1])
 
+# Getting the ISO date string from the list using the indices of the min and max temperatures and converting it into a human readable format
+
     min_date = convert_date(weather_data[min_temp_line][0])
     max_date = convert_date(weather_data[max_temp_line][0])
+
+# Creating a message
 
     overview = number_of_days + " Day Overview\n"
     min_message = "  The lowest temperature will be " + min_temp + ", and will occur on " + min_date + ".\n"
@@ -208,13 +233,7 @@ def generate_summary(weather_data):
     avg_min_message = "  The average low this week is " + avg_min + ".\n"
     avg_max_message = "  The average high this week is " + avg_max +".\n"
 
-    message = overview + min_message + max_message + avg_min_message + avg_max_message
-                
-    # message = (number_of_days + " Day Overview\n" +
-    # "The lowest temperature will be " + min_temp + ", and will occur on " + min_date + ".\n" +
-    # "The highest temperature will be "+ max_temp + ", and will occur on " + max_date + ".\n" +
-    # "The average low this week is " + avg_min + ".\n" +
-    # "The average high this week is " + avg_max +".")
+    message = overview + min_message + max_message + avg_min_message + avg_max_message               
 
     return message
 
@@ -226,13 +245,19 @@ def generate_daily_summary(weather_data):
     Returns:
         A string containing the summary information.
     """
+# Creating an empty string that will contain the message
 
     string_message = ""
+
     for line in weather_data:
+
+# Accessing the data from each line ot get the date of the message, min and max tempratures
 
         date = convert_date(line[0])
         min_temp = format_temperature(convert_f_to_c(line[1]))
         max_temp = format_temperature(convert_f_to_c(line[2]))
+
+#Creating string variable for each message line and appending it to the main message
 
         string_title = "---- " + date + " ----\n"
         string_min = "  Minimum Temperature: " + min_temp + "\n"
